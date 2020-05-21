@@ -1,0 +1,163 @@
+package edu.umb.cs210.p3;
+
+import stdlib.StdIn;
+import stdlib.StdOut;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+// An immutable data type representing a 3D point.
+public class Point3D implements Comparable<Point3D> {
+    private final double x; // x coordinate
+    private final double y; // y coordinate
+    private final double z; // z coordinate
+
+    // Construct a point in 3D given its coordinates.
+    public Point3D(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    // The Euclidean distance between this point and that.
+    public double distance(Point3D that) {
+        // Convert the angles to radians.
+        double lat1 = Math.toRadians(this.x);
+        double lon1 = Math.toRadians(this.y);
+        double lat2 = Math.toRadians(that.x);
+        double lon2 = Math.toRadians(that.y);
+
+        // Calculate great-circle distance d.
+        double a = Math.sin(lat1) * Math.sin(lat2);
+        double b = Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2);
+        double d = 111 * Math.acos((a + b));
+
+        // Return d.
+        d = Math.toDegrees(d);
+        return d;
+    }
+
+    // -1, 0, or 1 depending on this point's Euclidean
+    // distance to the origin (0, 0, 0) is less than,
+    // equal to, or greater than that point's Euclidean
+    // distance to the origin.
+    public int compareTo(Point3D that) {
+        double dist1 = Math.sqrt(x * x + y * y + z * z);
+        double dist2 = Math.sqrt(that.x * that.x + that.y *
+                that.y + that.z * that.z);
+        if (dist1 < dist2) {
+            return -1;
+        } else if (dist1 > dist2) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    // An x-coordinate comparator.
+    public static Comparator<Point3D> xOrder() {
+        return new XOrder();
+    }
+
+    // Helper x-coordinate comparator.
+    private static class XOrder implements Comparator<Point3D> {
+        // -1, 0, or 1 depending on whether p1's x-coordinate
+        // is less than, equal to, or greater than p2's
+        // x-coordinate.
+        public int compare(Point3D p1, Point3D p2) {
+            // comparing x values
+            if (p1.x < p2.x) {
+                return -1;
+            } else if (p1.x > p2.x) {
+                return 1;
+            }
+            return 0; // same x values
+
+        }
+    }
+
+    // A y-coordinate comparator.
+    public static Comparator<Point3D> yOrder() {
+        return new YOrder();
+    }
+
+    // Helper y-coordinate comparator.
+    private static class YOrder implements Comparator<Point3D> {
+        // -1, 0, or 1 depending on whether p1's y-coordinate
+        // is less than, equal to, or greater than p2's
+        // y-coordinate.
+        public int compare(Point3D p1, Point3D p2) {
+            if (p1.y < p2.y) {
+                return -1;
+            } else if (p1.y > p2.y) {
+                return 1;
+            }
+            return 0;
+
+        }
+    }
+
+    // A z-coordinate comparator.
+    public static Comparator<Point3D> zOrder() {
+        return new ZOrder();
+    }
+
+    // Helper z-coordinate comparator.
+    private static class ZOrder implements Comparator<Point3D> {
+        // -1, 0, or 1 depending on whether p1's z-coordinate
+        // is less than, equal to, or greater than p2's
+        // z-coordinate.
+        public int compare(Point3D p1, Point3D p2) {
+            if (p1.z < p2.z) {
+                return -1;
+            } else if (p1.z > p2.z) {
+                return 1;
+            }
+            return 0;
+
+        }
+    }
+
+    // A string representation of the point, as "(x, y, z)".
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
+    }
+
+    // Test client. [DO NOT EDIT]
+    public static void main(String[] args) {
+        StdOut.print("How many points?: ");
+        int n = StdIn.readInt();
+        Point3D[] points = new Point3D[n];
+        StdOut.printf("Enter %d doubles, separated by whitespace: ", n*3);
+        for (int i = 0; i < n; i++) {
+            double x = StdIn.readDouble();
+            double y = StdIn.readDouble();
+            double z = StdIn.readDouble();
+            points[i] = new Point3D(x, y, z);
+        }
+        StdOut.println("\nHere are the points in the order entered.");
+        for (Point3D point : points) {
+            StdOut.println(point);
+        }
+        Arrays.sort(points);
+        StdOut.println("Sorted by their natural ordering (compareTo).");
+        for (Point3D point : points) {
+            StdOut.println(point);
+        }
+        Arrays.sort(points, Point3D.xOrder());
+        StdOut.println("Sorted by their x value (xOrder).");
+        for (Point3D point : points) {
+            StdOut.println(point);
+        }
+        Arrays.sort(points, Point3D.yOrder());
+        StdOut.println("Sorted by their y value (yOrder).");
+        for (Point3D point : points) {
+            StdOut.println(point);
+        }
+        Arrays.sort(points, Point3D.zOrder());
+        StdOut.println("Sorted by their z value (zOrder).");
+        for (Point3D point : points) {
+            StdOut.println(point);
+        }
+    }
+}
